@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -49,6 +51,21 @@ class User implements UserInterface
      * @ORM\Column(type="integer", nullable=true)
      */
     private $age;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Travel", mappedBy="driver", orphanRemoval=true)
+     */
+    private $travels;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Travel", inversedBy="passengers")
+     */
+    private $travel;
+
+    public function __construct()
+    {
+        $this->travels = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -160,6 +177,49 @@ class User implements UserInterface
     public function setAge(?int $age): self
     {
         $this->age = $age;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Travel[]
+     */
+    public function getTravels(): Collection
+    {
+        return $this->travels;
+    }
+
+    public function addTravel(Travel $travel): self
+    {
+        if (!$this->travels->contains($travel)) {
+            $this->travels[] = $travel;
+            $travel->setDriver($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTravel(Travel $travel): self
+    {
+        if ($this->travels->contains($travel)) {
+            $this->travels->removeElement($travel);
+            // set the owning side to null (unless already changed)
+            if ($travel->getDriver() === $this) {
+                $travel->setDriver(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getTravel(): ?Travel
+    {
+        return $this->travel;
+    }
+
+    public function setTravel(?Travel $travel): self
+    {
+        $this->travel = $travel;
 
         return $this;
     }
