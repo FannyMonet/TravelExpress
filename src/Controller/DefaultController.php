@@ -13,4 +13,4 @@ class DefaultController extends Controller
 
         return $this->redirectToRoute('app_login');
     }
-}
+  }
