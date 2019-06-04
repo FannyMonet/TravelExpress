@@ -22,19 +22,19 @@ class TravelRepository extends ServiceEntityRepository
     // /**
     //  * @return Travel[] Returns an array of Travel objects
     //  */
-    /*
-    public function findByExampleField($value)
+    public function findByDepartureAndArrival($departure, $arrival)
     {
         return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
+            ->andWhere('t.departure = :departure')
+            ->andWhere('t.arrival = :arrival')
+            ->setParameters(array('departure' => $departure, 'arrival' => $arrival))
             ->orderBy('t.id', 'ASC')
-            ->setMaxResults(10)
+            ->setMaxResults(50)
             ->getQuery()
             ->getResult()
         ;
     }
-    */
+    
 
     /*
     public function findOneBySomeField($value): ?Travel

@@ -1,0 +1,13 @@
+{{ form_start(searchForm, {'attr': {'novalidate': 'novalidate'}}) }}
+<div class="form-inline">
+    <div class="form-group">
+            <div class="mr-3">
+            {{ form_widget(searchForm.departure) }}
+            </div>
+            <div class="mr-3">
+            {{ form_widget(searchForm.arrival) }}
+            </div>
+            {{ form_row(searchForm.submit) }}
+    </div>
+</div>
+{{ form_end(searchForm) }}

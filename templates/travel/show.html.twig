@@ -3,6 +3,7 @@
 {% block title %}Travel{% endblock %}
 
 {% block body %}
+<div class="container">
     <h1>Travel</h1>
     {% for label, messages in app.flashes %}
         {% for message in messages %}
@@ -61,6 +62,5 @@
     <a class="btn btn-success" href="{{ path('travel_edit', {'id': travel.id}) }}">Edit</a>
     {{ include('travel/_delete_form.html.twig') }}
     {% endif %}
-    
-
+</div>
 {% endblock %}

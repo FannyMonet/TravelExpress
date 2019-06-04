@@ -9,9 +9,6 @@ class DefaultController extends Controller
 {
     public function index()
     {
-    	//if($this->isGranted('IS_AUTHENTICATED_FULLY'))
-        	return $this->redirectToRoute('travel_index');
-
-        return $this->redirectToRoute('app_login');
+        return $this->redirectToRoute('travel_index');
     }
-  }
+ }

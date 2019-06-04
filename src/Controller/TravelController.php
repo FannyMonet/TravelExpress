@@ -4,11 +4,14 @@ namespace App\Controller;
 
 use App\Entity\Travel;
 use App\Form\TravelType;
+use App\Form\SearchFormType;
 use App\Repository\TravelRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 /**
  * @Route("/travel")
@@ -16,12 +19,20 @@ use Symfony\Component\Routing\Annotation\Route;
 class TravelController extends AbstractController
 {
     /**
-     * @Route("/", name="travel_index", methods={"GET"})
+     * @Route("/", name="travel_index", methods={"GET", "POST"})
      */
-    public function index(TravelRepository $travelRepository): Response
+    public function index(Request $request, TravelRepository $travelRepository): Response
     {
+        $form = $this->createForm(SearchFormType::class, array('method' => 'GET'));
+        $form->handleRequest($request);
+        $travels = $travelRepository->findAll();
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $travels = $travelRepository->findByDepartureAndArrival($form->get('departure')->getData(), $form->get('arrival')->getData());
+        }
         return $this->render('travel/index.html.twig', [
-            'travels' => $travelRepository->findAll(),
+            'travels' => $travels,
+            'searchForm' => $form->createView()
         ]);
     }
 
