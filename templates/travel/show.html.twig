@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Travel{% endblock %}
+
+{% block body %}
+    <h1>Travel</h1>
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Diver</th>
+                <td>{{ travel.driver.firstName }} {{ travel.driver.lastName }}</td>
+            </tr>
+            <tr>
+                <th>Price</th>
+                <td>{{ travel.price }}</td>
+            </tr>
+            <tr>
+                <th>Departure</th>
+                <td>{{ travel.departure }}</td>
+            </tr>
+            <tr>
+                <th>Arrival</th>
+                <td>{{ travel.arrival }}</td>
+            </tr>
+            <tr>
+                <th>Date</th>
+                <td>{{ travel.date ? travel.date|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Hour</th>
+                <td>{{ travel.hour ? travel.hour|date('H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Animals</th>
+                <td>{{ travel.animals ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Smoking</th>
+                <td>{{ travel.smoking ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Number of passengers</th>
+                <td>{{ travel.numberOfPassengers }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a class="btn btn-primary" href="{{ path('travel_index') }}">back to list</a>
+    {% if app.user and app.user.id != travel.driver.id %}
+    <a class="btn btn-success" href="{{ path('travel_book', {'id': travel.id}) }}">Book</a>
+    {% endif %}
+    
+    {% if app.user and app.user.id == travel.driver.id  %}
+    <a class="btn btn-success" href="{{ path('travel_edit', {'id': travel.id}) }}">Edit</a>
+    {{ include('travel/_delete_form.html.twig') }}
+    {% endif %}
+    
+
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Travel index{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>Travel index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Driver</th>
+                <th>Price</th>
+                <th>Departure</th>
+                <th>Arrival</th>
+                <th>Date</th>
+                <th>Hour</th>
+                <th>Animals</th>
+                <th>Smoking</th>
+                <th>Number of passengers</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for travel in travels %}
+            <tr>
+                <td>{{ travel.driver.firstname }} {{ travel.driver.lastName }}</td>
+                <td>{{ travel.price }}</td>
+                <td>{{ travel.departure }}</td>
+                <td>{{ travel.arrival }}</td>
+                <td>{{ travel.date ? travel.date|date('Y-m-d') : '' }}</td>
+                <td>{{ travel.hour ? travel.hour|date('H:i:s') : '' }}</td>
+                <td>{{ travel.animals ? 'Yes' : 'No' }}</td>
+                <td>{{ travel.smoking ? 'Yes' : 'No' }}</td>
+                <td>{{ travel.numberOfPassengers }}</td>
+                <td>
+                    <a class="btn btn-primary" href="{{ path('travel_show', {'id': travel.id}) }}">show</a>
+                    {% if app.user and travel.driver.id == app.user.id %}
+                    <a class="btn btn-primary" href="{{ path('travel_edit', {'id': travel.id}) }}">edit</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="10">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% if app.user %}
+    <a class="btn btn-primary" href="{{ path('travel_new') }}">Create new</a>
+    {% endif %}
+</div>
+{% endblock %}
