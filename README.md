@@ -8,6 +8,8 @@ You need Symfony 4, php 7 and Composer to run the website
 
 Clone the project
 
+First create the database travel_express (run the SQL file travel_express)
+
 Open the cmd prompt and run the commands:
 
 ```bash
