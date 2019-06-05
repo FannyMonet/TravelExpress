@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 /**
  * @Route("/travel")
@@ -61,12 +62,55 @@ class TravelController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="travel_show", methods={"GET"})
+     * @Route("/{id}", name="travel_show", methods={"GET", "POST"})
      */
-    public function show(Travel $travel): Response
+    public function show(Travel $travel, Request $request): Response
     {
+        $choices = array();
+        $i = 1;
+        for($i=1; $i<=$travel->getNumberOfPassengers(); $i++)
+        {
+            array_push($choices, $i);
+        }
+
+        $numberPassengersForm = $this->createFormBuilder()
+        ->add('numberOfPassengers', ChoiceType::class, [
+            'choices' => $choices,
+            'choice_label' => function($choice, $key, $value) {
+                return $value;
+            },
+        ])
+        ->add('submit', SubmitType::class,
+            [
+              'label' => 'Book',
+              'attr' => [
+                  'class' => 'btn btn btn-primary',
+              ]
+            ])
+        ->getForm();
+
+        $numberPassengersForm->handleRequest($request);
+
+        if ($numberPassengersForm->isSubmitted() && $numberPassengersForm->isValid()) {
+            if($travel->getPassengers()->contains($this->getUser()))
+            {
+                $this->addFlash('warning', 'You have already booked this trip.');
+            }
+            else if($travel->getPassengers()->count() + $numberPassengersForm->get('numberOfPassengers')->getData() <= $travel->getNumberOfPassengers())
+            {
+                $travel->addPassenger($this->getUser());
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($travel);
+                $entityManager->flush();
+                $this->addFlash('success', 'You successfully booked ' . $numberPassengersForm->get('numberOfPassengers')->getData() . ' place(s) in this trip.');
+            }
+            else
+                $this->addFlash('error', 'This trip is full');
+        }
+
         return $this->render('travel/show.html.twig', [
             'travel' => $travel,
+            'passengersForm' => $numberPassengersForm->createView()
         ]);
     }
 
