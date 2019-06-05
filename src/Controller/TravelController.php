@@ -153,28 +153,4 @@ class TravelController extends AbstractController
 
         return $this->redirectToRoute('travel_index');
     }
-
-    /**
-     * @Route("/{id}/book", name="travel_book", methods={"GET"})
-     */
-    public function book(Travel $travel): Response
-    {
-        if($travel->getPassengers()->contains($this->getUser()))
-        {
-            $this->addFlash('warning', 'You have already booked this trip.');
-        }
-        else if($travel->getPassengers()->count() < $travel->getNumberOfPassengers())
-        {
-            $travel->addPassenger($this->getUser());
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($travel);
-            $entityManager->flush();
-            $this->addFlash('success', 'You successfully booked this trip.');
-        }
-        else
-            $this->addFlash('error', 'This trip is full');
-        return $this->render('travel/show.html.twig', [
-            'travel' => $travel,
-        ]);
-    }
 }
