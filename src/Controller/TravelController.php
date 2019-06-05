@@ -66,6 +66,7 @@ class TravelController extends AbstractController
      */
     public function show(Travel $travel, Request $request): Response
     {
+        $price = 0;
         $choices = array();
         $i = 1;
         for($i=1; $i<=$travel->getNumberOfPassengers(); $i++)
@@ -92,17 +93,19 @@ class TravelController extends AbstractController
         $numberPassengersForm->handleRequest($request);
 
         if ($numberPassengersForm->isSubmitted() && $numberPassengersForm->isValid()) {
+            $numberOfPlaces =  $numberPassengersForm->get('numberOfPassengers')->getData();
             if($travel->getPassengers()->contains($this->getUser()))
             {
                 $this->addFlash('warning', 'You have already booked this trip.');
             }
-            else if($travel->getPassengers()->count() + $numberPassengersForm->get('numberOfPassengers')->getData() <= $travel->getNumberOfPassengers())
+            else if($travel->getPassengers()->count() +$numberOfPlaces <= $travel->getNumberOfPassengers())
             {
                 $travel->addPassenger($this->getUser());
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->persist($travel);
                 $entityManager->flush();
-                $this->addFlash('success', 'You successfully booked ' . $numberPassengersForm->get('numberOfPassengers')->getData() . ' place(s) in this trip.');
+                $price = $numberOfPlaces * $travel->getPrice();
+                $this->addFlash('success', 'You successfully booked ' . $numberOfPlaces . ' place(s) in this trip.');
             }
             else
                 $this->addFlash('error', 'This trip is full');
@@ -110,7 +113,8 @@ class TravelController extends AbstractController
 
         return $this->render('travel/show.html.twig', [
             'travel' => $travel,
-            'passengersForm' => $numberPassengersForm->createView()
+            'passengersForm' => $numberPassengersForm->createView(),
+            'price' => $price
         ]);
     }
 

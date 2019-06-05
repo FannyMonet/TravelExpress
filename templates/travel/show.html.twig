@@ -57,6 +57,7 @@
         {{ form_start(passengersForm)}}
             <div class="form-inline form-group">
                 {{form_row(passengersForm.numberOfPassengers)}}
+                <span class="mr-3">Price = {{ travel.price }}</span>
                 {{ form_row(passengersForm.submit)}}
             </div>
         {{ form_end(passengersForm) }}
